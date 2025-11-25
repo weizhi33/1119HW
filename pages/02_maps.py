@@ -3,17 +3,18 @@ import ipyleaflet as leaflet
 # 移除 pandas 導入，因為不再需要數據表格
 
 # 馬太鞍溪周邊中心坐標 (花蓮縣光復鄉，接近濕地)
-# 格式: (Lat, Lon)
-MATAAN_CENTER = (23.48, 121.42)
+# ipyleaflet 標準格式: (緯度 Lat, 經度 Lon)
+MATAAN_LAT = 23.48  # 緯度：北緯 23.48 度
+MATAAN_LON = 121.42 # 經度：東經 121.42 度
 
-# 移除 KEY_LOCATIONS 數據
 
 def create_location_map():
     """創建一個最簡單的 ipyleaflet 地圖，中心設定在馬太鞍溪附近。"""
     
     # 創建基礎地圖
     m = leaflet.Map(
-        center=MATAAN_CENTER, 
+        # 確保以 (緯度, 經度) 順序傳入
+        center=(MATAAN_LAT, MATAAN_LON), 
         zoom=13, # 設定合適的縮放級別
         scroll_wheel_zoom=True,
         layout={'height': '650px'}
@@ -49,5 +50,3 @@ def Page():
 
         # 將 ipyleaflet 地圖組件嵌入 Solara
         leaflet.Map.element(m=map_widget)
-        
-        # 移除所有數據表格和相關 Markdown
