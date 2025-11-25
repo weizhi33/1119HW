@@ -84,8 +84,10 @@ def Page():
         
         # 顯示標記點的數據表格
         df_locations = pd.DataFrame(KEY_LOCATIONS).drop(columns=['color'])
-        solara.DataFrame(
-            df_locations,
-            scrollable=False,
-            style={"maxWidth": "100%", "margin": "10px 0"}
-        )
+        
+        # 🌟 修正後的程式碼：移除 solara.DataFrame 的 style 參數，改用 solara.Div 包裹
+        with solara.Div(style={"maxWidth": "100%", "margin": "10px 0"}):
+            solara.DataFrame(
+                df_locations,
+                scrollable=False,
+            )
