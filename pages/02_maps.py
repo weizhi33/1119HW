@@ -1,27 +1,20 @@
 import solara
 import ipyleaflet as leaflet
-import pandas as pd
-# 移除 ipywidgets 導入，避免與 solara.HTML 混淆
-# import ipywidgets as widgets 
+# 移除 pandas 導入，因為不再需要數據表格
 
 # 馬太鞍溪周邊中心坐標 (花蓮縣光復鄉，接近濕地)
 # 格式: (Lat, Lon)
 MATAAN_CENTER = (23.48, 121.42)
 
-# 模擬的關鍵地點數據 (地理系風格的標註)
-KEY_LOCATIONS = [
-    {"name": "事件核心沖刷區 (模擬)", "lat": 23.490, "lon": 121.425, "color": "red", "info": "河川改道與侵蝕最嚴重區域。"},
-    {"name": "馬太鞍濕地入口", "lat": 23.467, "lon": 121.433, "color": "green", "info": "重要的生態保育區。"},
-    {"name": "水文觀測站 (模擬)", "lat": 23.500, "lon": 121.415, "color": "blue", "info": "提供降雨量與水位數據。"},
-]
+# 移除 KEY_LOCATIONS 數據
 
 def create_location_map():
-    """創建並設定包含關鍵標記的 ipyleaflet 地圖。"""
+    """創建一個最簡單的 ipyleaflet 地圖，中心設定在馬太鞍溪附近。"""
     
     # 創建基礎地圖
     m = leaflet.Map(
         center=MATAAN_CENTER, 
-        zoom=13, 
+        zoom=13, # 設定合適的縮放級別
         scroll_wheel_zoom=True,
         layout={'height': '650px'}
     )
@@ -29,30 +22,9 @@ def create_location_map():
     # 添加底圖 (使用 OpenStreetMap 作為基礎)
     m.add_layer(leaflet.TileLayer(name="OpenStreetMap"))
     
-    # 遍歷關鍵位置並添加標記 (Marker)
-    for loc in KEY_LOCATIONS:
-        # 【修改】直接創建 HTML 字串內容
-        popup_content_html = f"<strong>{loc['name']}</strong><br>{loc['info']}"
-        
-        # 創建標記
-        marker = leaflet.Marker(
-            location=(loc['lat'], loc['lon']),
-            draggable=False,
-            icon=leaflet.Icon(icon_url=f'https://placehold.co/30x30/{loc["color"].replace("#", "")}/ffffff?text=P', icon_size=[30, 30])
-        )
-        
-        # 將 Popup 綁定到 Marker：使用 leaflet.HTML 作為子元素
-        # 這是最穩定的 ipyleaflet 傳遞 HTML 內容的方式
-        marker.popup = leaflet.Popup(
-            child=leaflet.HTML(description=popup_content_html), # 使用 leaflet.HTML
-            close_button=False, 
-            auto_close=False, 
-            close_on_escape_key=True
-        )
-        
-        m.add_layer(marker)
+    # 移除標記和 Popup 邏輯
     
-    # 添加比例尺和圖層控制
+    # 添加比例尺和圖層控制 (可選，但保留以便使用者查看坐標)
     m.add_control(leaflet.ScaleControl(position="bottomleft"))
     m.add_control(leaflet.LayersControl(position="topright"))
     
@@ -61,33 +33,21 @@ def create_location_map():
 # ⭐ Solara 頁面組件 ⭐
 @solara.component
 def Page():
-    """Solara 頁面，用於展示標記地點的地圖。"""
+    """Solara 頁面，用於展示基礎地理環境地圖。"""
     
     # 創建地圖實例
     map_widget = solara.use_memo(create_location_map, dependencies=[])
     
-    with solara.Card(title="02. 馬太鞍溪事件關鍵地點標註", elevation=5):
-        solara.Markdown("## 📍 事件地理分析標註")
+    with solara.Card(title="02. 馬太鞍溪地理環境概覽 (基礎地圖)", elevation=5):
+        solara.Markdown("## 🌐 馬太鞍溪流域中心地圖")
         solara.Markdown(
             """
-            此地圖標註了馬太鞍溪事件周邊幾個重要的地理位置，包括模擬的沖刷區域中心、
-            馬太鞍濕地及水文觀測站。點擊標記 (P 點) 可以查看該地點的簡要說明。
+            此頁面僅展示馬太鞍溪事件周邊的基礎地理環境。地圖中心已設定在花蓮縣光復鄉一帶，
+            您可以透過拖曳與縮放來查看詳細地形。
             """
         )
 
         # 將 ipyleaflet 地圖組件嵌入 Solara
         leaflet.Map.element(m=map_widget)
         
-        solara.Markdown("---")
-
-        solara.Markdown("### 標記清單")
-        
-        # 顯示標記點的數據表格
-        df_locations = pd.DataFrame(KEY_LOCATIONS).drop(columns=['color'])
-        
-        # 🌟 修正後的程式碼：移除 solara.DataFrame 的 style 參數，改用 solara.Div 包裹
-        with solara.Div(style={"maxWidth": "100%", "margin": "10px 0"}):
-            solara.DataFrame(
-                df_locations,
-                scrollable=False,
-            )
+        # 移除所有數據表格和相關 Markdown
