@@ -81,3 +81,4 @@ def Page():
             df_locations,
             scrollable=False,
             style={"maxWidth": "100%", "margin": "10px 0"}
+        ) # <-- 已在這裡補上缺少的右括號 ')'
