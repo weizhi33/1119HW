@@ -59,11 +59,10 @@ def create_story_map(step_index):
     
     # 如果需要標記
     if step_data["marker"]:
-        # 修正：移除不被支援的 color 參數
-        # leafmap.maplibregl 的 add_marker 比較簡單，暫時使用預設樣式以確保運行
+        # 修正：popup 改為字典格式，以符合 Pydantic 驗證要求
         m.add_marker(
             lng_lat=step_data["location"],
-            popup=step_data["marker_text"]
+            popup={"html": step_data["marker_text"]}
         )
         
     m.add_layer_control()
