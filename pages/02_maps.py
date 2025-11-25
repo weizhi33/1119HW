@@ -1,7 +1,7 @@
 import solara
 import ipyleaflet as leaflet
 import pandas as pd
-from IPython.display import display
+import ipywidgets as widgets # <--- 【修改 1】導入 ipywidgets
 
 # 馬太鞍溪周邊中心坐標 (花蓮縣光復鄉，接近濕地)
 # 格式: (Lat, Lon)
@@ -30,8 +30,8 @@ def create_location_map():
     
     # 遍歷關鍵位置並添加標記 (Marker)
     for loc in KEY_LOCATIONS:
-        # 創建彈出式視窗 (Popup) 內容
-        popup_html = solara.HTML(tag="div", unsafe_innerHTML=f"<strong>{loc['name']}</strong><br>{loc['info']}")
+        # 【修改 2】使用 ipywidgets.HTML，因為 leaflet.Popup 期望一個 ipywidget 實例
+        popup_html = widgets.HTML(value=f"<strong>{loc['name']}</strong><br>{loc['info']}")
         
         # 創建標記
         marker = leaflet.Marker(
@@ -81,4 +81,4 @@ def Page():
             df_locations,
             scrollable=False,
             style={"maxWidth": "100%", "margin": "10px 0"}
-        ) # <-- 已在這裡補上缺少的右括號 ')'
+        )
