@@ -1,7 +1,8 @@
 import solara
 import ipyleaflet as leaflet
 import pandas as pd
-import ipywidgets as widgets # <--- 【修改 1】導入 ipywidgets
+# 移除 ipywidgets 導入，避免與 solara.HTML 混淆
+# import ipywidgets as widgets 
 
 # 馬太鞍溪周邊中心坐標 (花蓮縣光復鄉，接近濕地)
 # 格式: (Lat, Lon)
@@ -30,8 +31,8 @@ def create_location_map():
     
     # 遍歷關鍵位置並添加標記 (Marker)
     for loc in KEY_LOCATIONS:
-        # 【修改 2】使用 ipywidgets.HTML，因為 leaflet.Popup 期望一個 ipywidget 實例
-        popup_html = widgets.HTML(value=f"<strong>{loc['name']}</strong><br>{loc['info']}")
+        # 【修改】直接創建 HTML 字串內容
+        popup_content_html = f"<strong>{loc['name']}</strong><br>{loc['info']}"
         
         # 創建標記
         marker = leaflet.Marker(
@@ -40,8 +41,14 @@ def create_location_map():
             icon=leaflet.Icon(icon_url=f'https://placehold.co/30x30/{loc["color"].replace("#", "")}/ffffff?text=P', icon_size=[30, 30])
         )
         
-        # 將 Popup 綁定到 Marker
-        marker.popup = leaflet.Popup(child=popup_html, close_button=False, auto_close=False, close_on_escape_key=True)
+        # 將 Popup 綁定到 Marker：使用 leaflet.HTML 作為子元素
+        # 這是最穩定的 ipyleaflet 傳遞 HTML 內容的方式
+        marker.popup = leaflet.Popup(
+            child=leaflet.HTML(description=popup_content_html), # 使用 leaflet.HTML
+            close_button=False, 
+            auto_close=False, 
+            close_on_escape_key=True
+        )
         
         m.add_layer(marker)
     
