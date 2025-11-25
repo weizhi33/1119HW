@@ -26,8 +26,7 @@ def create_split_map():
     # 調整地圖高度
     m.layout.height = "700px"
     
-    # 加入其他控制項
-    m.add_control(leafmap.ScaleControl(position="bottomright"))
+    # 已移除 m.add_control(leafmap.ScaleControl(...)) 以避免 AttributeError
     
     return m
 
